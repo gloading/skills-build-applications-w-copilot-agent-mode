@@ -19,6 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from tracker_app import views
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -27,7 +29,19 @@ router.register(r'activities', views.ActivityViewSet)
 router.register(r'leaderboard', views.LeaderboardViewSet)
 router.register(r'workouts', views.WorkoutViewSet)
 
+@api_view(['GET'])
+def api_root(request, format=None):
+    base_url = 'http://localhost:8000/'
+    return Response({
+        'users': base_url + 'api/users/',
+        'teams': base_url + 'api/teams/',
+        'activities': base_url + 'api/activities/',
+        'leaderboard': base_url + 'api/leaderboard/',
+        'workouts': base_url + 'api/workouts/'
+    })
+
 urlpatterns = [
+    path('', api_root, name='api-root'),  # Root endpoint
     path("admin/", admin.site.urls),
     path('api/', include(router.urls)),
 ]
